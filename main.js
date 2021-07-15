@@ -1,58 +1,61 @@
 const submit = document.querySelector('button#submit-button')
 const result = document.querySelector('#results')
-const textInput = document.querySelector('input[type=text]')
+let textInput = document.querySelector('input[type=text]')
 const optionInputs = document.querySelectorAll('input[type=radio]')
+submit.style.opacity = 0
 
-textInput.addEventListener('keydown', function(){
+textInput.addEventListener('keydown', function(event){
     // console.log(textInput.value)
     // console.log(optionInputs[0])
-    let returnValue = ''
-    let optionArr  = []
-    for(const ops of optionInputs){
-        optionArr.push(ops.value)
-    }
-
-    function getOption(option){
-        if(option == 'encode'){
-            console.log('got to encode')
-            return encode(textInput.value)
+    if(event.keyCode == 13){
+        let returnValue = ''
+        let optionArr  = []
+        for(const ops of optionInputs){
+            optionArr.push(ops.value)
         }
-        else if(option == 'search'){
-            console.log('got to search')
-            if(textInput.value == ''){
-                return 'empty search'
+    
+        function getOption(option){
+            if(option === 'encode'){
+                console.log('got to encode')
+                return encode(textInput.value)
             }
-            let searchResult =""
-            const searchArr = search(textInput.value)
-            if(searchArr.length == 0){
-                return 'no emoji were found'
+            else if(option === 'search'){
+                console.log('got to search')
+                if(textInput.value === ''){
+                    return 'empty search'
+                }
+                let searchResult =""
+                const searchArr = search(textInput.value)
+                if(searchArr.length === 0){
+                    return 'no emoji were found'
+                }
+                for( let s of searchArr){
+                    searchResult += s.symbol
+                }
+                return searchResult
             }
-            for( let s of searchArr){
-                searchResult += s.symbol
+            else if(option === 'translate'){
+                console.log('got to translate', translate(textInput.value))
+                return translate(textInput.value)
             }
-            return searchResult
+            else if(option === 'madlib'){
+                console.log('got to madlib')
+                return madlib(textInput.value)
+            }
+            else if(option === 'random'){
+                console.log('got to random')
+                return getOption(randomElement(optionArr))
+            }
         }
-        else if(option == 'translate'){
-            console.log('got to translate')
-            return translate(textInput.value)
+    
+        for(let option of optionInputs){
+            
+            if(option.checked){
+                console.log(option.value)
+                returnValue = getOption(option.value)
+                // console.log(returnValue)
+            }
         }
-        else if(option == 'madlib'){
-            console.log('got to madlib')
-            return madlib(textInput.value)
-        }
-        else if(option == 'random'){
-            console.log('got to random')
-            return getOption(randomElement(optionArr))
-        }
+        result.innerText = returnValue
     }
-
-    for(let option of optionInputs){
-        
-        if(option.checked){
-            console.log(option.value)
-            returnValue = getOption(option.value)
-            // console.log(returnValue)
-        }
-    }
-    result.innerText = returnValue
 })
